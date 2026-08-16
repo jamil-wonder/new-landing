@@ -1,0 +1,15 @@
+{
+  "short_name": "Wonderscore",
+  "name": "Wonderscore — Your AI CMO for ChatGPT, Claude & Perplexity",
+  "icons": [
+    {
+      "src": "logo.svg",
+      "type": "image/svg+xml",
+      "sizes": "any"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#fdfcf8",
+  "theme_color": "#15463b",
+  "display": "standalone"
+}

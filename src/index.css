@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Hanken Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-serif: 'Spectral', Georgia, serif;
+  --font-mono-spline: 'Spline Sans Mono', monospace;
+  
+  --color-forest: #15463b;
+  --color-forest-hover: #0f332b;
+  --color-accent-green: #1e7d4f;
+  --color-gold: #d6a23a;
+  --color-sand: #ece3d1;
+  --color-subtle: #6f6757;
+  --color-muted: #8a8273;
+  --color-muted-light: #b3a98f;
+  --color-soft-bg: #f6f3ec;
+  --color-warm-bg: #fdfcf8;
+  --color-warm-bg-alt: #faf8f3;
+  --color-lime: #a8d860;
+  --color-error-red: #b1442a;
+  --color-amber: #9a6a12;
+
+  --animate-marquee: marquee 40s linear infinite;
+  --animate-marquee-reverse: marquee-reverse 40s linear infinite;
+  --animate-orbit: orbit 45s linear infinite;
+  --animate-orbit-reverse: orbit-reverse 45s linear infinite;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes marquee-reverse {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes orbit {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes orbit-reverse {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+
+:root {
+  --background: #fdfcf8;
+  --foreground: #23211b;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.font-spectral {
+  font-family: 'Spectral', Georgia, serif;
+}
+
+.font-mono-spline {
+  font-family: 'Spline Sans Mono', monospace;
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
