@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Check } from "lucide-react";
+import { authUrl } from "../lib/appUrl";
 
 export default function Pricing() {
   const [annual, setAnnual] = useState(true);
@@ -103,7 +104,7 @@ export default function Pricing() {
 
           <div className="mt-8">
             <a
-              href="https://app.wonderscore.ai/auth?signup=true"
+              href={authUrl(true)}
               className="block w-full bg-[#15463b] text-white hover:bg-[#0f332b] text-[14px] font-normal py-3.5 rounded-xl text-center transition-all shadow-[0_2px_8px_rgba(21,70,59,0.1)] cursor-pointer"
             >
               Start Your Free Trial

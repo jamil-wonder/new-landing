@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { WonderscoreLogo } from "./WonderscoreLogo";
 import { Menu, X } from "lucide-react";
+import { authUrl } from "../lib/appUrl";
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -42,13 +43,13 @@ export default function Header() {
             {/* CTA Buttons */}
             <div className="hidden md:flex items-center gap-3">
               <a
-                href="https://app.wonderscore.ai/auth"
+                href={authUrl()}
                 className="text-[13.5px] font-normal text-[#15463b] hover:underline px-3 py-1.5"
               >
                 Sign in
               </a>
               <a
-                href="https://app.wonderscore.ai/auth?signup=true"
+                href={authUrl(true)}
                 className="bg-[#15463b] text-white hover:bg-[#0f332b] text-[13px] font-normal px-4 py-2 rounded-lg transition-all shadow-[0_2px_8px_rgba(21,70,59,0.1)] shrink-0"
               >
                 Get Started Free
@@ -80,13 +81,13 @@ export default function Header() {
               ))}
               <div className="border-t border-[#f6f3ec] pt-3 mt-1 flex flex-col gap-2.5">
                 <a
-                  href="https://app.wonderscore.ai/auth"
+                  href={authUrl()}
                   className="text-[14px] font-normal text-[#15463b] py-1 text-center hover:underline"
                 >
                   Sign in
                 </a>
                 <a
-                  href="https://app.wonderscore.ai/auth?signup=true"
+                  href={authUrl(true)}
                   className="bg-[#15463b] text-white hover:bg-[#0f332b] text-[13.5px] font-normal px-4 py-2.5 rounded-lg text-center transition-all shadow-[0_2px_8px_rgba(21,70,59,0.1)]"
                 >
                   Get Started Free

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Sparkles, ArrowRight } from "lucide-react";
+import { scanUrl } from "../lib/appUrl";
 
 export default function FinalCTA() {
   const [url, setUrl] = useState("");
@@ -7,7 +8,7 @@ export default function FinalCTA() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const cleanUrl = url.trim() || "yourwebsite.com";
-    window.location.href = `https://app.wonderscore.ai/auth?signup=true&url=${encodeURIComponent(cleanUrl)}`;
+    window.location.href = scanUrl(cleanUrl);
   };
 
   return (

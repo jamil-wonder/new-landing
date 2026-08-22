@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Play, Globe, Loader2, ArrowRight, X, Search } from "lucide-react";
 import { WonderscoreLogo } from "./WonderscoreLogo";
+import { scanUrl } from "../lib/appUrl";
 
 const MODELS = [
   {
@@ -47,7 +48,7 @@ export default function Hero() {
   const handleScanSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const targetUrl = url.trim() || "yourwebsite.com";
-    window.location.href = `https://app.wonderscore.ai/auth?signup=true&url=${encodeURIComponent(targetUrl)}`;
+    window.location.href = scanUrl(targetUrl);
   };
 
   return (
