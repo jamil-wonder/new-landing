@@ -307,7 +307,7 @@ export default function Agents() {
               <div
                 className="flex items-start justify-center p-6 border-t border-[#ece3d1] bg-[#1e7d4f] bg-cover bg-center h-[240px]"
                 style={{
-                  backgroundImage: "linear-gradient(to bottom, rgba(30, 125, 79, 0.85), rgba(21, 90, 56, 0.95)), url('/bg.jpg')",
+                  backgroundImage: "linear-gradient(to bottom, rgba(30, 125, 79, 0.85), rgba(21, 90, 56, 0.95))",
                 }}
               >
                 <AgentMock kind={agent.kicker} />
