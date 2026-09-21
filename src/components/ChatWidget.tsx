@@ -1,28 +1,53 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle, X, Send } from "lucide-react";
+import { API_URL } from "../lib/appUrl";
 
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [isSent, setIsSent] = useState(false);
-  
+  const [isSending, setIsSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     message: ""
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // This used to be entirely fake — a `// Simulate sending email` comment
+  // and a hardcoded "Message Sent!" confirmation shown after a timeout,
+  // with no request ever made anywhere. A real visitor trying to reach
+  // support had their message silently discarded while being told it was
+  // received. Now it actually posts to the backend's contact endpoint and
+  // only shows success once the submission is durably saved server-side.
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.email || !formData.message) return;
-    
-    // Simulate sending email
-    setIsSent(true);
-    setTimeout(() => {
-      setIsOpen(false);
-      setTimeout(() => setIsSent(false), 300);
-      setFormData({ name: "", email: "", message: "" });
-    }, 2500);
+    if (!formData.email || !formData.message || isSending) return;
+
+    setIsSending(true);
+    setError(null);
+    try {
+      const res = await fetch(`${API_URL}/api/public/contact`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => null);
+        throw new Error(body?.detail || "Could not send your message. Please try again.");
+      }
+      setIsSent(true);
+      setTimeout(() => {
+        setIsOpen(false);
+        setTimeout(() => setIsSent(false), 300);
+        setFormData({ name: "", email: "", message: "" });
+      }, 2500);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not send your message. Please try again.");
+    } finally {
+      setIsSending(false);
+    }
   };
 
   return (
@@ -104,11 +129,16 @@ export default function ChatWidget() {
                       required
                     />
                   </div>
+                  {error && (
+                    <p className="text-[12.5px] text-[#b1442a] -mt-1">{error}</p>
+                  )}
+
                   <button
                     type="submit"
-                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#1e7d4f] py-3 text-[14px] font-normal text-white transition-colors hover:bg-[#15463b]"
+                    disabled={isSending}
+                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#1e7d4f] py-3 text-[14px] font-normal text-white transition-colors hover:bg-[#15463b] disabled:opacity-60 disabled:cursor-not-allowed"
                   >
-                    Send Message <Send size={16} />
+                    {isSending ? "Sending…" : "Send Message"} <Send size={16} />
                   </button>
                 </form>
               )}
