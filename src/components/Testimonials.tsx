@@ -1,4 +1,6 @@
 import React from "react";
+import { Quote } from "lucide-react";
+import { Eyebrow, Reveal } from "./ui";
 
 const TESTIMONIALS = [
   { name: "Alex R.", role: "Founder, Rethink Travel", quote: "Really like the interface — the initial setup was incredibly easy and the results showed up in weeks." },
@@ -11,67 +13,55 @@ const TESTIMONIALS = [
   { name: "Diego M.", role: "Marketing, DarePouch", quote: "Clear briefs, ready-to-ship drafts, and citations we can track. Feels like a full team." },
 ];
 
+function Card({ t, tone }: { t: (typeof TESTIMONIALS)[number]; tone: "green" | "gold" }) {
+  return (
+    <figure className="group relative flex h-[236px] w-[360px] shrink-0 flex-col justify-between overflow-hidden rounded-[24px] border border-[#e6dcc6] bg-white p-7 transition-all duration-300 hover:-translate-y-1 hover:border-[#cfd9cf] hover:shadow-[0_24px_50px_-26px_rgba(21,70,59,0.35)]">
+      <Quote size={30} className="absolute right-5 top-5 text-[#15463b]/[0.07]" />
+      <blockquote className="relative text-[15px] leading-[1.65] text-[#3d392e]">&ldquo;{t.quote}&rdquo;</blockquote>
+      <figcaption className="mt-4 flex items-center gap-3 border-t border-[#f1ead9] pt-4">
+        <div
+          className={`flex h-10 w-10 items-center justify-center rounded-full font-spectral text-[17px] text-white ${
+            tone === "green" ? "bg-gradient-to-br from-[#1e7d4f] to-[#15463b]" : "bg-gradient-to-br from-[#d6a23a] to-[#9a6a12]"
+          }`}
+        >
+          {t.name[0]}
+        </div>
+        <div>
+          <div className="text-[13.5px] font-medium text-[#23211b]">{t.name}</div>
+          <div className="font-mono-spline text-[9.5px] uppercase tracking-wider text-[#8a8273]">{t.role}</div>
+        </div>
+      </figcaption>
+    </figure>
+  );
+}
+
 export default function Testimonials() {
   const row1 = [...TESTIMONIALS.slice(0, 4), ...TESTIMONIALS.slice(0, 4)];
   const row2 = [...TESTIMONIALS.slice(4, 8), ...TESTIMONIALS.slice(4, 8)];
 
   return (
-    <section className="py-20 bg-transparent border-b border-[#ece3d1] overflow-hidden text-left">
-      <div className="max-w-[1180px] mx-auto px-4 md:px-9 mb-12 text-center">
-        <span className="font-mono-spline text-[10px] tracking-[0.14em] uppercase text-[#8a8273]">
-          Success Stories
-        </span>
-        <h2 className="font-spectral text-[32px] sm:text-[46px] font-normal tracking-tight text-[#15463b] mt-4 leading-tight">
-          Trusted by growing teams across US & Europe
+    <section className="overflow-hidden bg-[#fdfcf8] border-t border-[#e6dcc6] py-24 md:py-36 text-left">
+      <Reveal className="mx-auto mb-14 max-w-[1180px] px-4 text-center md:px-9 md:mb-20">
+        <Eyebrow>Success Stories</Eyebrow>
+        <h2 className="mx-auto mt-5 max-w-4xl font-spectral text-[36px] sm:text-[52px] md:text-[64px] font-normal leading-[1.04] tracking-[-0.035em] text-[#0f332b] text-balance">
+          Trusted by growing teams across <span className="italic text-[#1e7d4f]">US &amp; Europe</span>
         </h2>
-      </div>
+      </Reveal>
 
-      <div className="space-y-6">
-        {/* Row 1: Right-to-Left */}
-        <div className="flex w-max animate-marquee gap-5">
-          {row1.map((t, i) => (
-            <figure
-              key={`row1-${i}`}
-              className="flex h-[200px] w-[350px] shrink-0 flex-col justify-between rounded-[18px] border border-[#ece3d1] bg-white p-6 shadow-[0_4px_16px_rgba(60,48,28,0.01)] transition hover:border-[#dcd4c3]"
-            >
-              <blockquote className="text-[14px] leading-relaxed text-[#6f6757] italic">
-                "{t.quote}"
-              </blockquote>
-              <figcaption className="flex items-center gap-3 border-t border-[#f6f3ec] pt-4 mt-4">
-                {/* Avatar Initial Circle */}
-                <div className="h-9 w-9 rounded-full bg-[#eef3f0] border border-[#d0e4d6] flex items-center justify-center font-mono-spline text-[12px] font-normal text-[#1e7d4f]">
-                  {t.name[0]}
-                </div>
-                <div>
-                  <div className="text-xs font-normal text-[#23211b]">{t.name}</div>
-                  <div className="text-[10px] font-mono-spline uppercase tracking-wider text-[#8a8273]">{t.role}</div>
-                </div>
-              </figcaption>
-            </figure>
-          ))}
+      <div className="mask-fade-x space-y-5">
+        <div className="group/row">
+          <div className="flex w-max animate-marquee gap-5 group-hover/row:[animation-play-state:paused]">
+            {row1.map((t, i) => (
+              <Card key={`row1-${i}`} t={t} tone="green" />
+            ))}
+          </div>
         </div>
-
-        {/* Row 2: Left-to-Right */}
-        <div className="flex w-max animate-marquee-reverse gap-5">
-          {row2.map((t, i) => (
-            <figure
-              key={`row2-${i}`}
-              className="flex h-[200px] w-[350px] shrink-0 flex-col justify-between rounded-[18px] border border-[#ece3d1] bg-white p-6 shadow-[0_4px_16px_rgba(60,48,28,0.01)] transition hover:border-[#dcd4c3]"
-            >
-              <blockquote className="text-[14px] leading-relaxed text-[#6f6757] italic">
-                "{t.quote}"
-              </blockquote>
-              <figcaption className="flex items-center gap-3 border-t border-[#f6f3ec] pt-4 mt-4">
-                <div className="h-9 w-9 rounded-full bg-[#f6f3ec] border border-[#e8e1d0] flex items-center justify-center font-mono-spline text-[12px] font-normal text-[#d6a23a]">
-                  {t.name[0]}
-                </div>
-                <div>
-                  <div className="text-xs font-normal text-[#23211b]">{t.name}</div>
-                  <div className="text-[10px] font-mono-spline uppercase tracking-wider text-[#8a8273]">{t.role}</div>
-                </div>
-              </figcaption>
-            </figure>
-          ))}
+        <div className="group/row">
+          <div className="flex w-max animate-marquee-reverse gap-5 group-hover/row:[animation-play-state:paused]">
+            {row2.map((t, i) => (
+              <Card key={`row2-${i}`} t={t} tone="gold" />
+            ))}
+          </div>
         </div>
       </div>
     </section>

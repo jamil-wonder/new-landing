@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Eyebrow, Reveal } from "./ui";
 import { TrendingUp, Target, Sparkles, Calendar, Key, ShoppingBag, MousePointerClick, ArrowRight } from "lucide-react";
 
 interface CaseStudy {
@@ -146,30 +147,34 @@ export default function CaseStudies() {
         opacity: 1,
       });
     }
+    const onResize = () => {
+      const b = containerRef.current?.querySelectorAll("button")[activeIdx] as HTMLElement | undefined;
+      if (b) setPillStyle({ left: b.offsetLeft, width: b.offsetWidth, opacity: 1 });
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
   }, [activeIdx]);
 
   return (
-    <section id="results" className="py-20 bg-[#fdfcf8] text-left">
+    <section id="results" className="relative border-y border-[#e6dcc6] bg-[#fdfcf8] py-24 md:py-36 text-left">
       <div className="max-w-[1180px] mx-auto px-4 md:px-9">
         
         {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <span className="font-mono-spline text-[10px] tracking-[0.14em] uppercase text-[#8a8273]">
-            Proven Results
-          </span>
-          <h2 className="font-spectral text-[35px] md:text-[52px] font-normal tracking-tighter text-[#15463b] mt-4 leading-[1]">
-            The Wonderscore Effect
+        <Reveal className="text-center max-w-3xl mx-auto mb-12">
+          <Eyebrow>Proven Results</Eyebrow>
+          <h2 className="font-spectral text-[38px] sm:text-[52px] md:text-[64px] font-normal tracking-[-0.035em] text-[#0f332b] mt-5 leading-[1.02]">
+            The Wonderscore <span className="italic text-[#1e7d4f]">Effect</span>
           </h2>
 
           {/* Toggle Pills */}
           <div className="mt-8 flex justify-center">
             <div
               ref={containerRef}
-              className="relative inline-flex items-center gap-1 rounded-full border border-[#ece3d1] bg-white p-1"
+              className="relative inline-flex max-w-full items-center gap-0.5 sm:gap-1 rounded-full border border-[#e6dcc6] bg-white p-1 shadow-[0_10px_30px_-14px_rgba(21,70,59,0.3)]"
             >
               {/* Sliding Pill */}
               <span
-                className="absolute rounded-full bg-[#eef3f0] border border-[#d0e4d6] transition-all duration-300 ease-out pointer-events-none h-[34px]"
+                className="absolute rounded-full bg-[#15463b] transition-all duration-300 ease-out pointer-events-none h-[34px]"
                 style={{
                   left: pillStyle.left,
                   width: pillStyle.width,
@@ -180,8 +185,8 @@ export default function CaseStudies() {
                 <button
                   key={st.slug}
                   onClick={() => setActiveIdx(idx)}
-                  className={`relative z-10 px-5 py-1.5 rounded-full text-xs font-normal tracking-wide transition-colors cursor-pointer flex items-center gap-2 h-[34px] ${
-                    idx === activeIdx ? "text-[#1e7d4f]" : "text-[#8a8273] hover:text-[#23211b]"
+                  className={`relative z-10 px-2.5 sm:px-5 py-1.5 rounded-full text-[11.5px] sm:text-xs font-normal sm:tracking-wide whitespace-nowrap transition-colors cursor-pointer flex items-center gap-2 h-[34px] ${
+                    idx === activeIdx ? "text-white" : "text-[#6f6757] hover:text-[#23211b]"
                   }`}
                 >
                   <img src={st.favicon} alt="" className="h-3.5 w-3.5 rounded-sm object-contain" />
@@ -190,13 +195,14 @@ export default function CaseStudies() {
               ))}
             </div>
           </div>
-        </div>
+        </Reveal>
 
         {/* Content Box */}
         <div key={active.slug} className="mt-12 space-y-6">
           
           {/* Header Brand block */}
-          <div className="border border-[#ece3d1] bg-white rounded-[22px] p-6 md:p-8 shadow-[0_4px_24px_rgba(60,48,28,0.02)]">
+          <div className="border border-[#e6dcc6] bg-white rounded-[28px] p-6 md:p-10 shadow-[0_30px_80px_-40px_rgba(21,70,59,0.3)] relative overflow-hidden">
+            <div className="pointer-events-none absolute -top-32 -right-24 h-72 w-72 rounded-full bg-[radial-gradient(closest-side,rgba(168,216,96,0.28),transparent)]" />
             <div className="flex items-center gap-2 text-[#6f6757]">
               <img src={active.favicon} alt="" className="h-5 w-5 rounded-sm object-contain" />
               <span className="font-mono-spline text-[10px] tracking-[0.14em] uppercase font-normal">
@@ -205,7 +211,7 @@ export default function CaseStudies() {
             </div>
             
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mt-3">
-              <h3 className="font-spectral text-[24px] sm:text-[32px] font-normal tracking-tight text-[#15463b] leading-tight max-w-3xl">
+              <h3 className="font-spectral text-[28px] sm:text-[42px] font-normal tracking-[-0.03em] text-[#0f332b] leading-[1.08] max-w-3xl relative">
                 {active.headline}
               </h3>
               <a
@@ -225,11 +231,11 @@ export default function CaseStudies() {
                 return (
                   <div
                     key={m.k}
-                    className="relative overflow-hidden rounded-xl border border-[#ece3d1] bg-[#fdfcf8] p-5 text-left"
+                    className="relative overflow-hidden rounded-2xl border border-[#e6dcc6] bg-gradient-to-br from-[#f4f8ef] to-[#fdfcf8] p-5 text-left"
                   >
                     <div className="relative z-10">
                       <div className="text-[11px] font-mono-spline uppercase tracking-wider text-[#8a8273]">{m.k}</div>
-                      <div className="mt-1.5 font-spectral text-3xl font-normal tracking-tight text-[#15463b]">
+                      <div className="mt-2 font-spectral text-[40px] font-normal tracking-[-0.03em] text-[#15463b]">
                         {m.v}
                       </div>
                     </div>
@@ -244,7 +250,7 @@ export default function CaseStudies() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             
             {/* Google Search Impression Graph */}
-            <div className="bg-white border border-[#ece3d1] rounded-[22px] p-6 shadow-[0_4px_24px_rgba(60,48,28,0.02)] flex flex-col justify-between">
+            <div className="bg-white border border-[#e6dcc6] rounded-[28px] p-6 md:p-8 shadow-[0_20px_60px_-36px_rgba(21,70,59,0.3)] flex flex-col justify-between">
               <div>
                 <div className="flex justify-between items-center mb-6">
                   <span className="font-mono-spline text-[9.5px] uppercase tracking-wider text-[#8a8273] font-normal">
@@ -292,7 +298,7 @@ export default function CaseStudies() {
                     {/* Chart Area */}
                     <path d={chartArea} fill="url(#case-study-grad)" />
                     {/* Chart Line */}
-                    <path d={chartPath} fill="none" stroke="#1e7d4f" strokeWidth="2.2" strokeLinecap="round" />
+                    <motion.path d={chartPath} fill="none" stroke="#1e7d4f" strokeWidth="2.2" strokeLinecap="round" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.6, ease: "easeOut" }} />
 
                     {/* Milestones */}
                     {milestonePoint && (
@@ -319,7 +325,7 @@ export default function CaseStudies() {
             </div>
 
             {/* AI Recommendation Citation Box */}
-            <div className="bg-white border border-[#ece3d1] rounded-[22px] p-6 shadow-[0_4px_24px_rgba(60,48,28,0.02)] flex flex-col justify-between">
+            <div className="bg-white border border-[#e6dcc6] rounded-[28px] p-6 md:p-8 shadow-[0_20px_60px_-36px_rgba(21,70,59,0.3)] flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">

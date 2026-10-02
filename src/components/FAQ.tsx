@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown } from "lucide-react";
+import { Plus } from "lucide-react";
+import { Eyebrow, Reveal } from "./ui";
 
 interface FAQItem {
   q: string;
@@ -70,37 +71,35 @@ const FAQS: FAQItem[] = [
   }
 ];
 
-function AccordionItem({ item, isOpen, onClick }: { item: FAQItem; isOpen: boolean; onClick: () => void }) {
+function AccordionItem({ item, index, isOpen, onClick }: { item: FAQItem; index: number; isOpen: boolean; onClick: () => void }) {
   return (
-    <div className="border-b border-[#2a6356] py-4 text-left">
+    <div className={`rounded-2xl border text-left transition-colors duration-300 ${isOpen ? "border-[#a8d860]/35 bg-white/[0.06]" : "border-white/10 hover:border-white/25"}`}>
       <button
         onClick={onClick}
-        className="w-full flex items-center justify-between py-2 text-left focus:outline-none cursor-pointer"
+        aria-expanded={isOpen}
+        className="flex w-full items-center gap-4 px-5 py-5 text-left cursor-pointer sm:px-6"
       >
-        <span className="font-spectral text-[16.5px] sm:text-[18.5px] font-normal text-white pr-4">
-          {item.q}
-        </span>
+        <span className={`hidden font-mono-spline text-[11px] sm:block ${isOpen ? "text-[#a8d860]" : "text-[#6f9a88]"}`}>{String(index + 1).padStart(2, "0")}</span>
+        <span className="flex-1 pr-2 font-spectral text-[18px] leading-snug text-white sm:text-[20px]">{item.q}</span>
         <motion.span
-          animate={{ rotate: isOpen ? 180 : 0 }}
-          transition={{ duration: 0.2 }}
-          className="text-[#86b89f] shrink-0"
+          animate={{ rotate: isOpen ? 45 : 0 }}
+          transition={{ duration: 0.25 }}
+          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border ${isOpen ? "border-[#a8d860] bg-[#a8d860] text-[#0c2b24]" : "border-white/20 text-[#a9c9bb]"}`}
         >
-          <ChevronDown size={18} />
+          <Plus size={16} />
         </motion.span>
       </button>
-      
+
       <AnimatePresence initial={false}>
         {isOpen && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: "easeInOut" }}
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
             className="overflow-hidden"
           >
-            <p className="pt-2 pb-4 text-[#86b89f] text-[13.5px] leading-relaxed max-w-3xl">
-              {item.a}
-            </p>
+            <p className="px-5 pb-6 text-[15px] leading-relaxed text-[#a9c9bb] sm:pl-[68px] sm:pr-16">{item.a}</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -112,33 +111,24 @@ export default function FAQ() {
   const [openIdx, setOpenIdx] = useState<number | null>(0);
 
   return (
-    <section id="faq" className="py-20 bg-[#15463b] text-left">
-      <div className="max-w-[1180px] mx-auto px-4 md:px-9">
-        
-        {/* Title */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="font-mono-spline text-[10px] tracking-[0.14em] uppercase text-[#a8d860]">
-            Questions & Answers
-          </span>
-          <h2 className="font-spectral text-[35px] md:text-[52px] font-normal tracking-tight text-white mt-4 leading-tight text-center">
-            Frequently Asked Questions
+    <section id="faq" className="relative overflow-hidden bg-[#0c2b24] py-24 md:py-36 text-left">
+      <div className="pointer-events-none absolute -top-40 right-0 h-[480px] w-[700px] rounded-full bg-[radial-gradient(closest-side,rgba(30,125,79,0.4),transparent)]" />
+      <div className="relative mx-auto grid max-w-[1180px] gap-12 px-4 md:px-9 lg:grid-cols-[360px_1fr] lg:gap-20">
+        <Reveal className="lg:sticky lg:top-32 lg:self-start">
+          <Eyebrow dark>Questions &amp; Answers</Eyebrow>
+          <h2 className="mt-5 font-spectral text-[38px] sm:text-[52px] font-normal leading-[1.04] tracking-[-0.035em] text-white">
+            Frequently Asked <span className="italic text-shine-dark">Questions</span>
           </h2>
-        </div>
+        </Reveal>
 
-        {/* Accordions */}
-        <div className="max-w-3xl mx-auto border-t border-[#2a6356]">
+        <div className="space-y-3">
           {FAQS.map((item, idx) => (
-            <AccordionItem
-              key={idx}
-              item={item}
-              isOpen={openIdx === idx}
-              onClick={() => setOpenIdx(openIdx === idx ? null : idx)}
-            />
+            <Reveal key={idx} delay={Math.min(idx, 5) * 0.04} y={16}>
+              <AccordionItem item={item} index={idx} isOpen={openIdx === idx} onClick={() => setOpenIdx(openIdx === idx ? null : idx)} />
+            </Reveal>
           ))}
         </div>
-
       </div>
     </section>
   );
 }
-

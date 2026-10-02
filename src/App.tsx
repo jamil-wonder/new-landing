@@ -1,6 +1,7 @@
 import React from "react";
 import Header from "./components/Header";
 import Hero from "./components/Hero";
+import TrustStrip from "./components/TrustStrip";
 import DashboardShowcase from "./components/DashboardShowcase";
 import CaseStudies from "./components/CaseStudies";
 import Testimonials from "./components/Testimonials";
@@ -16,19 +17,14 @@ import ChatWidget from "./components/ChatWidget";
 
 export default function App() {
   return (
-    <div
-      className="min-h-screen text-[#23211b] bg-[#fdfcf8] bg-fixed"
-      style={{
-        backgroundImage: "radial-gradient(#ece3d1 1.3px, transparent 1.3px)",
-        backgroundSize: "24px 24px",
-      }}
-    >
+    <div className="min-h-screen text-[#23211b] bg-[#f8f5ed]">
       <Header />
       <main>
         <Hero />
+        <TrustStrip />
+        <Stats />
         <DashboardShowcase />
         <Agents />
-        <Stats />
         <CaseStudies />
         <HowItWorks />
         <ReplaceStack />
