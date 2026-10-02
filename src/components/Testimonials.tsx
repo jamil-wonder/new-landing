@@ -3,7 +3,7 @@ import { Quote } from "lucide-react";
 import { Eyebrow, Reveal } from "./ui";
 
 const TESTIMONIALS = [
-  { name: "Alex R.", role: "Founder, Rethink Travel", quote: "Really like the interface — the initial setup was incredibly easy and the results showed up in weeks." },
+  { name: "Alex R.", role: "Founder, Rethink Travel", quote: "Really like the interface - the initial setup was incredibly easy and the results showed up in weeks." },
   { name: "Marisol P.", role: "Owner, Gelato Bar", quote: "A friend told me people were using AI to find spots. Within weeks we started getting new customers who said they found us on Perplexity." },
   { name: "Elliot G.", role: "Co-founder, SaaSbench", quote: "Full SEO and GEO scans, an auto-blog feature, and a helpful community assistant. Already a big ROI." },
   { name: "Quentin B.", role: "Shopify owner", quote: "I run a Shopify store doing about £1.2M/year. Within 60 days Perplexity was recommending our products over competitors with 10× our budget." },

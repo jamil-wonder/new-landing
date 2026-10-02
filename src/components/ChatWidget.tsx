@@ -15,7 +15,7 @@ export default function ChatWidget() {
     message: ""
   });
 
-  // This used to be entirely fake — a `// Simulate sending email` comment
+  // This used to be entirely fake - a `// Simulate sending email` comment
   // and a hardcoded "Message Sent!" confirmation shown after a timeout,
   // with no request ever made anywhere. A real visitor trying to reach
   // support had their message silently discarded while being told it was
