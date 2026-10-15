@@ -164,6 +164,17 @@ body::after {
 }
 .btn-sheen:hover::after { left: 130%; }
 
+/* Hero: a fine dot grid */
+.dot-grid {
+  background-image: radial-gradient(rgba(21, 70, 59, 0.17) 1px, transparent 1.3px);
+  background-size: 22px 22px;
+  background-position: 11px 11px;
+}
+
+/* the field inside the hero search pill: the pill shows focus, the input itself draws no outline */
+.hero-input { outline: none; }
+.hero-input:focus-visible { outline: none; }
+
 .mask-fade-x {
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
   mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);

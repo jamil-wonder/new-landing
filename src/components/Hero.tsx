@@ -1,7 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "framer-motion";
-import { ArrowRight, Check, Globe, Link2, Play, ShieldCheck, Sparkles, TrendingUp, X } from "lucide-react";
-import { WonderscoreLogo } from "./WonderscoreLogo";
+import React, { useEffect, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { ArrowRight, Check, Globe, Link2, Play, Sparkles, X } from "lucide-react";
 import { scanUrl } from "../lib/appUrl";
 
 const BRAND = "The Culpeper";
@@ -42,51 +41,21 @@ const MODELS = [
 ];
 
 const PLACEHOLDERS = ["theculpeper.com", "yourbrand.co.uk", "yourwebsite.com"];
+const SCORE = 73;
 
-function EngineDot({ src, muted = false }: { src: string; muted?: boolean }) {
+const EASE = [0.22, 1, 0.36, 1] as const;
+
+function EngineDot({ src, size = 18 }: { src: string; size?: number }) {
   return (
-    <span className={`flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full bg-white transition-opacity ${muted ? "opacity-80" : ""}`}>
-      <img src={src} alt="" className="h-[11px] w-[11px] object-contain" />
+    <span style={{ width: size, height: size }} className="flex shrink-0 items-center justify-center rounded-full bg-white">
+      <img src={src} alt="" style={{ width: size * 0.6, height: size * 0.6 }} className="object-contain" />
     </span>
   );
 }
 
-function ScoreRing({ value }: { value: number }) {
-  const r = 46;
-  const c = 2 * Math.PI * r;
-  return (
-    <div className="relative h-[118px] w-[118px]">
-      <svg viewBox="0 0 120 120" className="h-full w-full -rotate-90">
-        <circle cx="60" cy="60" r={r} fill="none" stroke="rgba(255,255,255,0.09)" strokeWidth="9" />
-        <motion.circle
-          cx="60"
-          cy="60"
-          r={r}
-          fill="none"
-          stroke="url(#ring-grad)"
-          strokeWidth="9"
-          strokeLinecap="round"
-          strokeDasharray={c}
-          initial={{ strokeDashoffset: c }}
-          animate={{ strokeDashoffset: c - (c * value) / 100 }}
-          transition={{ duration: 1.8, ease: [0.22, 1, 0.36, 1], delay: 0.5 }}
-        />
-        <defs>
-          <linearGradient id="ring-grad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#a8d860" />
-            <stop offset="100%" stopColor="#1e7d4f" />
-          </linearGradient>
-        </defs>
-      </svg>
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="font-spectral text-[34px] leading-none text-white num">{value}</span>
-        <span className="mt-1 font-mono-spline text-[7.5px] uppercase tracking-[0.08em] text-[#86b89f] whitespace-nowrap">AI visibility</span>
-      </div>
-    </div>
-  );
-}
+/* ─────────────── the one card: an AI answer, and the score it adds up to ─────────────── */
 
-function HeroConsole() {
+function AnswerCard() {
   const reduce = useReducedMotion();
   const [active, setActive] = useState(0);
   const [typed, setTyped] = useState(0);
@@ -94,7 +63,6 @@ function HeroConsole() {
   const model = MODELS[active];
   const full = model.pre + BRAND + model.post;
 
-  // Type the answer, then rotate to the next engine
   useEffect(() => {
     if (reduce) {
       setTyped(full.length);
@@ -112,166 +80,135 @@ function HeroConsole() {
 
   useEffect(() => {
     if (paused || reduce || typed < full.length) return;
-    const t = setTimeout(() => setActive((a) => (a + 1) % MODELS.length), 3200);
+    const t = setTimeout(() => setActive((a) => (a + 1) % MODELS.length), 3400);
     return () => clearTimeout(t);
   }, [typed, full.length, paused, reduce]);
 
   const preEnd = model.pre.length;
   const brandEnd = preEnd + BRAND.length;
   const shown = full.slice(0, typed);
-  const partPre = shown.slice(0, preEnd);
-  const partBrand = shown.slice(preEnd, brandEnd);
-  const partPost = shown.slice(brandEnd);
   const done = typed >= full.length;
+  const r = 30;
+  const c = 2 * Math.PI * r;
 
   return (
     <div
-      className="relative rounded-[26px] border border-white/10 bg-[#0c2b24] shadow-[0_50px_120px_-30px_rgba(10,31,26,0.7)] overflow-hidden text-left"
+      className="relative grid overflow-hidden rounded-[24px] bg-[#0c2b24] text-left shadow-[0_50px_100px_-40px_rgba(10,31,26,0.55)] md:grid-cols-[minmax(0,1fr)_240px]"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      <div className="pointer-events-none absolute -top-32 -right-24 h-80 w-80 rounded-full bg-[#1e7d4f]/30 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-32 -left-24 h-72 w-72 rounded-full bg-[#a8d860]/10 blur-3xl" />
-
-      {/* window chrome */}
-      <div className="relative flex items-center justify-between border-b border-white/10 px-5 py-3.5">
-        <div className="flex gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
-          <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
-          <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
-        </div>
-        <div className="flex items-center gap-2 rounded-full bg-white/[0.06] px-3.5 py-1 font-mono-spline text-[10px] text-[#a9c9bb]">
-          <ShieldCheck size={11} className="text-[#a8d860]" /> app.wonderscore.ai / overview
-        </div>
-        <span className="hidden sm:flex items-center gap-1.5 font-mono-spline text-[9.5px] uppercase tracking-wider text-[#a8d860]">
-          <span className="relative flex h-1.5 w-1.5">
-            <span className="absolute inset-0 rounded-full bg-[#a8d860] animate-ring" />
-            <span className="relative h-1.5 w-1.5 rounded-full bg-[#a8d860]" />
-          </span>
-          Live example
-        </span>
-        <span className="sm:hidden w-10" />
-      </div>
-
-      <div className="relative grid md:grid-cols-[250px_1fr] gap-0">
-        {/* Left: score + mention share */}
-        <div className="border-b md:border-b-0 md:border-r border-white/10 p-5 md:p-6 flex md:flex-col gap-6 md:gap-7 items-center md:items-stretch">
-          <div className="shrink-0 md:self-start">
-            <ScoreRing value={73} />
-          </div>
-          <div className="flex-1 w-full space-y-3.5">
-            <div className="font-mono-spline text-[9.5px] uppercase tracking-[0.14em] text-[#86b89f]">Mention share</div>
-            {MODELS.map((m, i) => (
-              <button
-                key={m.id}
-                onClick={() => setActive(i)}
-                className="group w-full text-left"
-                aria-label={`Show ${m.id} answer`}
-              >
-                <div className="flex items-center justify-between text-[11.5px]">
-                  <span className={`flex items-center gap-2 transition-colors ${i === active ? "text-white" : "text-[#a9c9bb] group-hover:text-white"}`}>
-                    <EngineDot src={m.logo} />
-                    {m.id}
-                  </span>
-                  <span className="num text-[#a8d860] font-medium">{m.share}%</span>
-                </div>
-                <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-white/10">
-                  <motion.div
-                    className={`h-full rounded-full ${i === active ? "bg-[#a8d860]" : "bg-[#1e7d4f]"}`}
-                    initial={{ width: 0 }}
-                    animate={{ width: `${m.share}%` }}
-                    transition={{ duration: 1.3, delay: 0.7 + i * 0.12, ease: [0.22, 1, 0.36, 1] }}
-                  />
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Right: the conversation */}
-        <div className="p-5 md:p-7 flex flex-col min-h-[340px]">
-          <div className="flex justify-end">
-            <div className="max-w-[88%] rounded-2xl rounded-tr-md bg-[#a8d860] px-4 py-2.5 text-[13.5px] font-medium text-[#0c2b24]">
-              Recommend a unique boutique hotel in Shoreditch
-            </div>
-          </div>
-
-          {/* engine tabs */}
-          <div className="mt-6 flex flex-wrap gap-1.5" role="tablist" aria-label="AI engine">
+      {/* the conversation */}
+      <div className="relative p-5 sm:p-7">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-1" role="tablist" aria-label="AI engine">
             {MODELS.map((m, i) => (
               <button
                 key={m.id}
                 role="tab"
                 aria-selected={i === active}
+                aria-label={m.id}
                 onClick={() => setActive(i)}
-                className={`relative flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[12px] transition-colors ${
-                  i === active ? "text-[#0c2b24]" : "text-[#a9c9bb] hover:text-white"
+                className={`flex cursor-pointer items-center gap-2 rounded-full py-1.5 pl-1.5 text-[12px] transition-all duration-300 ${
+                  i === active ? "bg-white pr-3.5 text-[#0c2b24]" : "pr-1.5 text-[#a9c9bb] hover:bg-white/10"
                 }`}
               >
-                {i === active && (
-                  <motion.span layoutId="hero-tab" className="absolute inset-0 rounded-full bg-white" transition={{ type: "spring", stiffness: 420, damping: 34 }} />
-                )}
-                <span className="relative flex items-center gap-2">
-                  <EngineDot src={m.logo} muted={i !== active} />
-                  {m.id}
-                </span>
+                <EngineDot src={m.logo} size={20} />
+                {i === active && <span className="font-medium">{m.id}</span>}
               </button>
             ))}
           </div>
+          <span className="hidden font-mono-spline text-[9.5px] uppercase tracking-wider text-[#86b89f] sm:inline">Example answer</span>
+        </div>
 
-          <div className="mt-4 flex-1 rounded-2xl rounded-tl-md border border-white/10 bg-white/[0.04] p-4 sm:p-5">
-            <div className="flex items-center gap-2 mb-3">
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white">
-                <img src={model.logo} alt="" className="h-3.5 w-3.5 object-contain" />
-              </span>
-              <span className="text-[12.5px] text-white">{model.id}</span>
-              <AnimatePresence>
-                {done && (
-                  <motion.span
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="ml-auto inline-flex items-center gap-1 rounded-full border border-[#a8d860]/30 bg-[#a8d860]/10 px-2 py-0.5 font-mono-spline text-[8.5px] uppercase tracking-wider text-[#a8d860]"
-                  >
-                    <Check size={9} /> Brand cited
-                  </motion.span>
-                )}
-              </AnimatePresence>
-            </div>
-            <p className="text-[14.5px] leading-[1.7] text-[#e6f1ea] min-h-[96px]">
-              {partPre}
+        <div className="mt-5 flex justify-end">
+          <div className="max-w-[86%] rounded-2xl rounded-tr-md bg-[#a8d860] px-4 py-2.5 text-[13.5px] font-medium text-[#0c2b24]">
+            Recommend a unique boutique hotel in Shoreditch
+          </div>
+        </div>
+
+        <div className="mt-4 flex items-start gap-3">
+          <EngineDot src={model.logo} size={26} />
+          <div className="min-w-0 flex-1">
+            <p className="min-h-[96px] text-[14.5px] leading-[1.7] text-[#e6f1ea] sm:min-h-[76px]">
+              {shown.slice(0, preEnd)}
               <span className="rounded-[5px] bg-[#a8d860]/20 px-1 font-medium text-[#d6f09b] underline decoration-[#a8d860]/60 underline-offset-[3px]">
-                {partBrand}
+                {shown.slice(preEnd, brandEnd)}
               </span>
-              {partPost}
+              {shown.slice(brandEnd)}
               {!done && <span className="ml-0.5 inline-block h-[15px] w-[2px] translate-y-[2px] bg-[#a8d860] animate-caret" />}
             </p>
-
-            <div className="mt-3 flex flex-wrap items-center gap-2 min-h-[28px]">
-              <AnimatePresence mode="wait">
-                {done &&
-                  model.sources.map((s, i) => (
-                    <motion.span
-                      key={model.id + s}
-                      initial={{ opacity: 0, y: 6 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.08 }}
-                      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono-spline text-[10px] ${
-                        i === 0
-                          ? "border-[#a8d860]/40 bg-[#a8d860]/10 text-[#d6f09b]"
-                          : "border-white/10 text-[#a9c9bb]"
-                      }`}
-                    >
-                      <Link2 size={9} /> {s}
-                    </motion.span>
-                  ))}
-              </AnimatePresence>
+            <div className="mt-2 flex min-h-[28px] flex-wrap items-center gap-1.5">
+              {done &&
+                model.sources.map((s, i) => (
+                  <motion.span
+                    key={model.id + s}
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.08 }}
+                    className={`inline-flex items-center gap-1.5 rounded-lg px-2 py-1 font-mono-spline text-[10px] ${
+                      i === 0 ? "bg-[#a8d860]/15 text-[#d6f09b]" : "bg-white/[0.07] text-[#a9c9bb]"
+                    }`}
+                  >
+                    <Link2 size={9} /> {s}
+                  </motion.span>
+                ))}
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* the score it adds up to - same card, its own panel */}
+      <div className="relative bg-[#0f3a30] p-5 sm:p-6">
+        <div className="flex items-center gap-4 md:flex-col md:items-start">
+          <div className="relative h-[72px] w-[72px] shrink-0">
+            <svg viewBox="0 0 72 72" className="h-full w-full -rotate-90">
+              <circle cx="36" cy="36" r={r} fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="6" />
+              <motion.circle
+                cx="36"
+                cy="36"
+                r={r}
+                fill="none"
+                stroke="#a8d860"
+                strokeWidth="6"
+                strokeLinecap="round"
+                strokeDasharray={c}
+                initial={{ strokeDashoffset: c }}
+                animate={{ strokeDashoffset: c - (c * SCORE) / 100 }}
+                transition={{ duration: 1.6, ease: EASE, delay: 0.9 }}
+              />
+            </svg>
+            <span className="num absolute inset-0 flex items-center justify-center font-spectral text-[24px] text-white">{SCORE}</span>
+          </div>
+          <div>
+            <div className="font-mono-spline text-[9.5px] uppercase tracking-[0.14em] text-[#86b89f]">Wonder Score</div>
+            <div className="mt-1 font-spectral text-[18px] leading-tight text-white">Good AI visibility</div>
+          </div>
+        </div>
+
+        <div className="mt-5 space-y-3">
+          {MODELS.map((m, i) => (
+            <button key={m.id} onClick={() => setActive(i)} className="group block w-full cursor-pointer text-left" aria-label={`Show ${m.id} answer`}>
+              <div className="flex items-center justify-between text-[11.5px]">
+                <span className={i === active ? "text-white" : "text-[#a9c9bb] group-hover:text-white"}>{m.id}</span>
+                <span className="num text-[#a8d860]">{m.share}%</span>
+              </div>
+              <div className="mt-1.5 h-[3px] overflow-hidden rounded-full bg-white/10">
+                <motion.div
+                  className={`h-full rounded-full ${i === active ? "bg-[#a8d860]" : "bg-[#3f8a64]"}`}
+                  initial={{ width: 0 }}
+                  animate={{ width: `${m.share}%` }}
+                  transition={{ duration: 1.2, delay: 1 + i * 0.1, ease: EASE }}
+                />
+              </div>
+            </button>
+          ))}
         </div>
       </div>
     </div>
   );
 }
+
+/* ───────────────────────── the hero ───────────────────────── */
 
 export default function Hero() {
   const [url, setUrl] = useState("");
@@ -290,158 +227,109 @@ export default function Hero() {
     window.location.href = scanUrl(url.trim() || PLACEHOLDERS[2]);
   };
 
-  // Gentle 3D tilt that follows the pointer (fine pointers only)
-  const stageRef = useRef<HTMLDivElement>(null);
-  const mx = useMotionValue(0);
-  const my = useMotionValue(0);
-  const rx = useSpring(useTransform(my, [-0.5, 0.5], [3, -3]), { stiffness: 120, damping: 20 });
-  const ry = useSpring(useTransform(mx, [-0.5, 0.5], [-4, 4]), { stiffness: 120, damping: 20 });
-  const onMove = (e: React.PointerEvent) => {
-    if (reduce || e.pointerType !== "mouse" || !stageRef.current) return;
-    const r = stageRef.current.getBoundingClientRect();
-    mx.set((e.clientX - r.left) / r.width - 0.5);
-    my.set((e.clientY - r.top) / r.height - 0.5);
-  };
-  const onLeave = () => {
-    mx.set(0);
-    my.set(0);
-  };
+  const rise = (delay: number) => ({
+    initial: reduce ? false : { opacity: 0, y: 16 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.8, delay, ease: EASE },
+  });
 
   return (
-    <section className="relative pt-32 sm:pt-40 pb-16 md:pb-24 overflow-hidden bg-[#f8f5ed]">
-      {/* atmosphere */}
-      <div className="pointer-events-none absolute inset-0 hairline-grid opacity-70 [mask-image:radial-gradient(ellipse_70%_55%_at_50%_0%,#000_30%,transparent_80%)]" />
-      <div className="pointer-events-none absolute -top-40 left-1/2 h-[520px] w-[920px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(168,216,96,0.32),transparent)]" />
-      <div className="pointer-events-none absolute top-40 -left-32 h-[380px] w-[380px] rounded-full bg-[radial-gradient(closest-side,rgba(214,162,58,0.16),transparent)]" />
+    <section className="relative overflow-hidden bg-[#f8f5ed] pb-20 pt-32 sm:pt-40 md:pb-28">
+      {/* dot grid, fading out towards the edges and the bottom */}
+      <div className="dot-grid pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_75%_70%_at_50%_35%,#000_40%,transparent_100%)]" />
+      {/* one soft, still light behind the headline */}
+      <div className="pointer-events-none absolute left-1/2 top-[-260px] h-[620px] w-[1100px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(168,216,96,0.22),transparent)]" />
 
-      <div className="relative mx-auto max-w-[1180px] px-4 md:px-9 text-center">
-        <motion.a
-          href="#features"
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="group inline-flex items-center gap-2.5 rounded-full border border-[#e3d9c2] bg-white/80 py-1.5 pl-2 pr-4 backdrop-blur"
+      <div className="relative mx-auto max-w-[1120px] px-5 text-center md:px-10">
+        <motion.button
+          {...rise(0)}
+          type="button"
+          onClick={() => setVideoModalOpen(true)}
+          className="group inline-flex cursor-pointer items-center gap-2.5 rounded-full bg-white py-1.5 pl-1.5 pr-4 text-[13px] text-[#4d4636] shadow-[0_6px_18px_-8px_rgba(21,70,59,0.3)] transition-shadow hover:shadow-[0_8px_22px_-8px_rgba(21,70,59,0.4)]"
         >
-          <span className="rounded-full bg-[#15463b] px-2.5 py-0.5 font-mono-spline text-[9.5px] uppercase tracking-[0.14em] text-[#a8d860]">
-            New
+          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#15463b]">
+            <Play size={9} className="ml-px fill-[#a8d860] text-[#a8d860]" />
           </span>
-          <span className="text-[12.5px] text-[#4d4636]">Track your brand across ChatGPT, Claude, Gemini and Perplexity</span>
+          Watch the product tour
           <ArrowRight size={13} className="text-[#15463b] transition-transform group-hover:translate-x-0.5" />
-        </motion.a>
+        </motion.button>
 
         <motion.h1
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.85, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
-          className="mx-auto mt-8 max-w-[980px] font-spectral text-[46px] sm:text-[74px] md:text-[96px] font-normal leading-[0.98] tracking-[-0.045em] text-[#0c2b24] text-balance"
+          {...rise(0.08)}
+          className="mx-auto mt-8 max-w-[900px] font-spectral text-[44px] font-normal leading-[1.02] tracking-[-0.04em] text-[#0c2b24] sm:text-[64px] md:text-[80px]"
         >
-          Is AI recommending <span className="italic text-shine">your business?</span>
+          Is AI recommending
+          <br />
+          <span className="relative inline-block">
+            <span className="italic text-shine">your business?</span>
+            <svg viewBox="0 0 400 22" preserveAspectRatio="none" aria-hidden className="pointer-events-none absolute -bottom-[0.06em] left-[1%] h-[0.15em] w-[97%] overflow-visible">
+              <defs>
+                <linearGradient id="swash" x1="0" x2="1">
+                  <stop offset="0%" stopColor="#1e7d4f" />
+                  <stop offset="55%" stopColor="#a8d860" />
+                  <stop offset="100%" stopColor="#d6a23a" />
+                </linearGradient>
+              </defs>
+              <motion.path
+                d="M3 14 C 70 3, 150 19, 225 9 S 350 6, 397 11"
+                fill="none"
+                stroke="url(#swash)"
+                strokeWidth="4"
+                strokeLinecap="round"
+                initial={reduce ? false : { pathLength: 0, opacity: 0 }}
+                animate={{ pathLength: 1, opacity: 1 }}
+                transition={{ duration: 1, delay: 0.9, ease: [0.65, 0, 0.35, 1] }}
+              />
+            </svg>
+          </span>
         </motion.h1>
 
-        <motion.p
-          initial={{ opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="mx-auto mt-7 max-w-[600px] text-[16.5px] sm:text-[19px] leading-[1.6] text-[#6f6757]"
-        >
+        <motion.p {...rise(0.18)} className="mx-auto mt-7 max-w-[580px] text-[17px] leading-[1.65] text-[#5a5442] sm:text-[18.5px]">
           Enter your website. Wonderscore crawls citations and deploys six agents to grow your search share across every AI model.
         </motion.p>
 
-        <motion.div
-          initial={{ opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          className="mx-auto mt-10 max-w-[600px]"
+        <motion.form
+          {...rise(0.28)}
+          onSubmit={handleScanSubmit}
+          className="mx-auto mt-9 flex w-full max-w-[560px] items-center gap-2 rounded-full bg-white p-1.5 pl-5 text-left shadow-[0_20px_44px_-20px_rgba(21,70,59,0.5)] transition-shadow duration-200 focus-within:shadow-[0_22px_50px_-16px_rgba(30,125,79,0.6)]"
         >
-          <form
-            onSubmit={handleScanSubmit}
-            className="group relative flex flex-col sm:flex-row gap-2 rounded-[22px] sm:rounded-full border border-[#e3d9c2] bg-white p-2 shadow-[0_20px_60px_-20px_rgba(21,70,59,0.35)] transition-shadow focus-within:shadow-[0_24px_70px_-18px_rgba(30,125,79,0.5)] focus-within:border-[#1e7d4f]/60"
+          <Globe className="shrink-0 text-[#9b927f]" size={18} />
+          <label className="min-w-0 flex-1">
+            <span className="sr-only">Your website</span>
+            <input
+              type="text"
+              inputMode="url"
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck={false}
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              placeholder={PLACEHOLDERS[phIdx]}
+              className="hero-input w-full border-0 bg-transparent py-3 text-[16px] text-[#23211b] placeholder:text-[#b3a98f]"
+            />
+          </label>
+          <button
+            type="submit"
+            className="group inline-flex shrink-0 cursor-pointer items-center gap-2 rounded-full bg-[#15463b] px-5 py-3 text-[14.5px] font-medium text-white transition-colors hover:bg-[#0f332b] sm:px-6"
           >
-            <label className="flex flex-1 items-center gap-2.5 px-4 cursor-text">
-              <Globe className="shrink-0 text-[#8a8273]" size={17} />
-              <span className="sr-only">Your website</span>
-              <input
-                type="text"
-                inputMode="url"
-                autoCapitalize="none"
-                autoCorrect="off"
-                spellCheck={false}
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                placeholder={PLACEHOLDERS[phIdx]}
-                className="w-full bg-transparent py-3.5 text-[16px] font-medium text-[#23211b] outline-none placeholder:text-[#b3a98f]"
-              />
-            </label>
-            <button
-              type="submit"
-              className="btn-sheen inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl sm:rounded-full bg-[#15463b] px-7 py-4 text-[14.5px] font-medium text-white transition-colors hover:bg-[#0f332b] cursor-pointer"
-            >
-              Analyse my site free
-              <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />
-            </button>
-          </form>
+            <span className="hidden sm:inline">Analyse my site free</span>
+            <span className="sm:hidden">Analyse</span>
+            <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />
+          </button>
+        </motion.form>
 
-          <div className="mt-5 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[12.5px] text-[#6f6757]">
-            {["Free scan, no signup", "No card required", "Priced in GBP"].map((t) => (
-              <span key={t} className="inline-flex items-center gap-1.5">
-                <Check size={13} className="text-[#1e7d4f]" /> {t}
-              </span>
-            ))}
-            <button
-              onClick={() => setVideoModalOpen(true)}
-              className="inline-flex items-center gap-1.5 font-medium text-[#15463b] hover:underline cursor-pointer"
-            >
-              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#15463b]">
-                <Play size={8} className="fill-white text-white ml-px" />
-              </span>
-              Watch the product tour
-            </button>
-          </div>
+        <motion.div {...rise(0.36)} className="mt-5 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[13px] text-[#6f6757]">
+          {["Free scan, no signup", "No card required", "Priced in GBP"].map((t) => (
+            <span key={t} className="inline-flex items-center gap-1.5">
+              <Check size={14} className="text-[#1e7d4f]" /> {t}
+            </span>
+          ))}
         </motion.div>
 
-        {/* product-as-hero */}
-        <motion.div
-          initial={{ opacity: 0, y: 60 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.45, ease: [0.22, 1, 0.36, 1] }}
-          className="relative mx-auto mt-16 sm:mt-20 max-w-[980px] [perspective:1400px]"
-          onPointerMove={onMove}
-          onPointerLeave={onLeave}
-          ref={stageRef}
-        >
-          <motion.div style={{ rotateX: rx, rotateY: ry, transformStyle: "preserve-3d" }}>
-            <HeroConsole />
-          </motion.div>
-
-          {/* floating proof chips */}
-          <div className="pointer-events-none hidden xl:block">
-            <div className="absolute -left-10 top-24 animate-float">
-              <div className="flex items-center gap-3 rounded-2xl border border-[#e3d9c2] bg-white px-4 py-3 shadow-[0_24px_50px_-18px_rgba(21,70,59,0.4)]">
-                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#eef3f0]">
-                  <TrendingUp size={17} className="text-[#1e7d4f]" />
-                </span>
-                <div className="text-left">
-                  <div className="font-spectral text-[20px] leading-none text-[#0c2b24]">+312%</div>
-                  <div className="mt-1 font-mono-spline text-[8.5px] uppercase tracking-wider text-[#8a8273]">mention share, MoM</div>
-                </div>
-              </div>
-            </div>
-            <div className="absolute -right-10 bottom-20 animate-float-slow">
-              <div className="flex items-center gap-3 rounded-2xl border border-[#e3d9c2] bg-white px-4 py-3 shadow-[0_24px_50px_-18px_rgba(21,70,59,0.4)]">
-                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#15463b]">
-                  <Sparkles size={16} className="text-[#a8d860]" />
-                </span>
-                <div className="text-left">
-                  <div className="text-[13px] font-medium text-[#0c2b24]">Cited as source #1</div>
-                  <div className="mt-0.5 font-mono-spline text-[8.5px] uppercase tracking-wider text-[#8a8273]">across 4 AI engines</div>
-                </div>
-              </div>
-            </div>
-          </div>
+        {/* the product, framed */}
+        <motion.div {...rise(0.5)} className="relative mx-auto mt-16 max-w-[900px] sm:mt-20">
+          <AnswerCard />
         </motion.div>
-        <p className="mt-6 font-mono-spline text-[10px] uppercase tracking-[0.14em] text-[#b3a98f]">
-          Illustrative example · Pick an engine to see its answer
-        </p>
       </div>
 
       <AnimatePresence>
@@ -461,7 +349,9 @@ export default function Hero() {
               className="relative z-10 w-full max-w-4xl overflow-hidden rounded-2xl border border-white/10 bg-[#0c2b24] shadow-[0_40px_100px_rgba(0,0,0,0.5)]"
             >
               <div className="flex items-center justify-between border-b border-white/10 px-5 py-3">
-                <span className="font-mono-spline text-[11px] uppercase tracking-wider text-[#a8d860]">Wonderscore product tour</span>
+                <span className="inline-flex items-center gap-2 font-mono-spline text-[11px] uppercase tracking-wider text-[#a8d860]">
+                  <Sparkles size={12} /> Wonderscore product tour
+                </span>
                 <button onClick={() => setVideoModalOpen(false)} className="rounded-full p-1.5 text-white/70 hover:bg-white/10 hover:text-white" aria-label="Close video">
                   <X size={16} />
                 </button>
