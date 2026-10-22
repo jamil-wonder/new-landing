@@ -14,8 +14,11 @@ import FAQ from "./components/FAQ";
 import FinalCTA from "./components/FinalCTA";
 import Footer from "./components/Footer";
 import ChatWidget from "./components/ChatWidget";
+import ComingSoon from "./components/ComingSoon";
 
-export default function App() {
+const SHOW_COMING_SOON = true;
+
+function FullLanding() {
   return (
     <div className="min-h-screen text-[#23211b] bg-[#f8f5ed]">
       <Header />
@@ -37,4 +40,8 @@ export default function App() {
       <ChatWidget />
     </div>
   );
+}
+
+export default function App() {
+  return SHOW_COMING_SOON ? <ComingSoon /> : <FullLanding />;
 }
