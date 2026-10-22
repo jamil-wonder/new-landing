@@ -1,5 +1,5 @@
 import { FormEvent, useState } from "react";
-import { ArrowRight, Check, LoaderCircle, Mail, Sparkles } from "lucide-react";
+import { ArrowRight, Check, LoaderCircle, Mail } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 import { API_URL } from "../lib/appUrl";
 import { WonderscoreLogo } from "./WonderscoreLogo";
@@ -62,7 +62,7 @@ export default function ComingSoon() {
       };
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#f8f5ed] text-ink">
+    <div className="relative min-h-screen overflow-hidden bg-[#f2eee4] text-ink">
       <div className="pointer-events-none absolute inset-0 dot-grid opacity-[0.22]" />
 
       <header className="relative z-10 mx-auto flex w-full max-w-7xl items-center justify-between px-5 py-5 sm:px-8 lg:px-10">
@@ -78,7 +78,7 @@ export default function ComingSoon() {
       <main className="relative z-10 mx-auto flex w-full max-w-7xl flex-col px-5 pb-10 pt-10 sm:px-8 sm:pt-16 lg:px-10 lg:pt-20">
         <motion.section {...entrance} className="mx-auto max-w-3xl text-center">
           <div className="mb-5 flex items-center justify-center gap-2 font-mono-spline text-[11px] font-medium uppercase tracking-[0.14em] text-accent-green">
-            <Sparkles size={14} aria-hidden="true" />
+            <span aria-hidden="true"><WonderscoreLogo size={14} color="#1e7d4f" /></span>
             AI visibility, made clear
           </div>
           <h1 className="font-serif text-[43px] leading-[0.98] tracking-[-0.045em] text-forest sm:text-[62px] lg:text-[76px]">
@@ -109,7 +109,7 @@ export default function ComingSoon() {
                 placeholder="Your work email"
                 autoComplete="email"
                 disabled={formState === "loading" || formState === "success"}
-                className="h-13 w-full rounded-sm border border-forest/15 bg-[#fcfbf7] py-3 pl-11 pr-4 text-[15px] font-medium text-ink outline-none transition placeholder:text-subtle/60 focus:border-forest/55 focus:ring-2 focus:ring-forest/10 disabled:cursor-not-allowed disabled:opacity-70"
+                className="h-13 w-full rounded-sm border border-forest/15 bg-[#fcfbf7] py-3 pl-11 pr-4 text-[15px] font-medium text-ink outline-none transition placeholder:text-subtle/60 focus:border-forest focus:ring-0 disabled:cursor-not-allowed disabled:opacity-70"
               />
             </div>
             <button
